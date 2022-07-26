@@ -29,6 +29,7 @@
       colors.update((cols) => {
         let idx = cols.findIndex((c) => c === color);
         cols[idx] = col;
+        color = col;
         return cols;
       });
     }
