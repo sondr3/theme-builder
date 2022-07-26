@@ -13,10 +13,7 @@
     inputElem.focus();
   };
 
-  const updateBackground = (event: any) => {
-    console.log(event);
-    $background = event.target.value;
-  };
+  const updateBackground = (event: any) => ($background = event.target.value);
 </script>
 
 <span class="sm:block" on:click={onClick}>
