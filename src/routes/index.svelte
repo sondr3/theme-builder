@@ -7,9 +7,17 @@
   background.subscribe((c) => {
     backgroundColor = c;
   });
+
+  let colors: unknown[] = [];
+  const addColor = () => {
+    colors = [...colors, ColorRow];
+  };
 </script>
 
 <h1>COLORS</h1>
 <p>Background: {toHex(backgroundColor)}</p>
+<button on:click={addColor}>Add color</button>
 
-<ColorRow />
+{#each colors as color, i (i)}
+  <svelte:component this={color} />
+{/each}

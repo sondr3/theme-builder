@@ -14,10 +14,10 @@
     inputElem.focus();
   };
 
-  let color = "#f5f5f5";
-  let calc = hex(color);
-  let wcag = round(wcagContrastValue(calc, $background));
-  let apca = round(Math.abs(apcaContrastValue(calc, $background)));
+  let color = "#ffffff";
+  $: calc = hex(color);
+  $: wcag = round(wcagContrastValue(calc, $background));
+  $: apca = round(Math.abs(apcaContrastValue(calc, $background)));
 </script>
 
 <div>
