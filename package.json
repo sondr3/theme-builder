@@ -50,5 +50,8 @@
   "lint-staged": {
     "*.md,*.ts,*.html,*.js,*.svelte": "prettier --write --plugin-search-dir=.",
     "*.ts,*.js,*.svelte": "eslint --cache --fix"
+  },
+  "dependencies": {
+    "a11y-color-contrast": "0.2.0"
   }
 }
