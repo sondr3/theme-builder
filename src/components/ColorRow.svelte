@@ -7,6 +7,7 @@
     wcagContrastValue,
   } from "a11y-color-contrast";
   import { background, colors } from "$lib/stores";
+  import ValidColorIcon from "./ValidColorIcon.svelte";
 
   let editing = false;
   const toggle = async () => {
@@ -36,50 +37,59 @@
   $: calc = hex(color);
   $: wcag = round(wcagContrastValue(calc, hex($background)));
   $: apca = round(Math.abs(apcaContrastValue(calc, hex($background))));
+  $: validWcag = !Number.isNaN(wcag) && wcag >= 7.5;
+  $: validApca = !Number.isNaN(apca) && apca >= 70;
   // $: invalid = Number.isNaN(wcag) || Number.isNaN(apca);
 </script>
 
 <div>
-  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
-    <div
-      class="px-4 py-5 shadow rounded-lg overflow-hidden sm:p-6"
-      style:background-color={$background}
-      style:color
-      on:click={onClick}
-    >
-      <dt class="text-sm font-medium truncate">Color</dt>
-      {#if editing}
-        <input
-          on:input={updateColor}
-          bind:this={inputElem}
-          class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md text-gray-800"
-          value={color}
-          placeholder={color}
-          on:blur={() => (editing = false)}
-          on:focus={() => (editing = true)}
-          type="text"
-        />
-      {:else}
-        <dd class="mt-1 text-3xl font-semibold">{color}</dd>
-      {/if}
+  <dl
+    class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow divide-y divide-gray-200 md:grid-cols-3 md:divide-y-0 md:divide-x"
+    style:background-color={$background}
+    style:color
+  >
+    <div class="px-4 py-5 sm:p-6" on:click={onClick}>
+      <dt class="text-base font-normal">Color</dt>
+      <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
+        {#if editing}
+          <input
+            on:input={updateColor}
+            bind:this={inputElem}
+            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md text-gray-800"
+            value={color}
+            placeholder={color}
+            on:blur={() => (editing = false)}
+            on:focus={() => (editing = true)}
+            type="text"
+          />
+        {:else}
+          <div class="flex items-baseline text-2xl font-semibold">
+            {color}
+          </div>
+        {/if}
+      </dd>
     </div>
 
-    <div
-      class="px-4 py-5 shadow rounded-lg overflow-hidden sm:p-6"
-      style:background-color={$background}
-      style:color
-    >
-      <dt class="text-sm font-medium truncate">WCAG 2.0</dt>
-      <dd class="mt-1 text-3xl font-semibold">{wcag}</dd>
+    <div class="px-4 py-5 sm:p-6 flex justify-between">
+      <div>
+        <dt class="text-base font-normal">WCAG 2.2</dt>
+        <dd class="mt-1 md:block lg:flex">
+          <div class="flex items-baseline text-2xl font-semibold">{wcag}</div>
+        </dd>
+      </div>
+
+      <ValidColorIcon valid={validWcag} {color} />
     </div>
 
-    <div
-      class="px-4 py-5 shadow rounded-lg overflow-hidden sm:p-6"
-      style:background-color={$background}
-      style:color
-    >
-      <dt class="text-sm font-medium truncate">WCAG 3.0</dt>
-      <dd class="mt-1 text-3xl font-semibold">{apca}</dd>
+    <div class="px-4 py-5 sm:p-6 flex justify-between">
+      <div>
+        <dt class="text-base font-normal">WCAG 3.0</dt>
+        <dd class="mt-1 md:block lg:flex">
+          <div class="flex items-baseline text-2xl font-semibold">{apca}</div>
+        </dd>
+      </div>
+
+      <ValidColorIcon valid={validApca} {color} />
     </div>
   </dl>
 </div>
