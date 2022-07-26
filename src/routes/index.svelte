@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { colors } from "$lib/stores";
   import ColorRow from "$components/ColorRow.svelte";
   import EditBackground from "$components/EditBackground.svelte";
 
-  let colors: unknown[] = [];
   const addColor = () => {
-    colors = [...colors, ColorRow];
+    colors.update((old) => [...old, "#f5f5f5"]);
   };
 </script>
 
@@ -42,6 +42,6 @@
   </div>
 </div>
 
-{#each colors as color, i (i)}
-  <svelte:component this={color} color="#123456" />
+{#each $colors as color, i (i)}
+  <ColorRow {color} />
 {/each}
