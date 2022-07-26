@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { apcaContrastValue, hex, round, toHex, wcagContrastValue } from "a11y-color-contrast";
+  import { apcaContrastValue, hex, round, wcagContrastValue } from "a11y-color-contrast";
   import { background } from "$lib/stores";
 
   let editing = false;
@@ -14,10 +14,10 @@
     inputElem.focus();
   };
 
-  let color = "#ffffff";
+  export let color = "#ffffff";
   $: calc = hex(color);
-  $: wcag = round(wcagContrastValue(calc, $background));
-  $: apca = round(Math.abs(apcaContrastValue(calc, $background)));
+  $: wcag = round(wcagContrastValue(calc, hex($background)));
+  $: apca = round(Math.abs(apcaContrastValue(calc, hex($background))));
 </script>
 
 <div>
@@ -25,7 +25,7 @@
     <div
       class="px-4 py-5 shadow rounded-lg overflow-hidden sm:p-6"
       on:click={onClick}
-      style:background-color={toHex($background)}
+      style:background-color={$background}
       style:color
     >
       <dt class="text-sm font-medium truncate">Color</dt>
@@ -46,7 +46,7 @@
 
     <div
       class="px-4 py-5 shadow rounded-lg overflow-hidden sm:p-6"
-      style:background-color={toHex($background)}
+      style:background-color={$background}
       style:color
     >
       <dt class="text-sm font-medium truncate">WCAG 2.0</dt>
@@ -55,7 +55,7 @@
 
     <div
       class="px-4 py-5 shadow rounded-lg overflow-hidden sm:p-6"
-      style:background-color={toHex($background)}
+      style:background-color={$background}
       style:color
     >
       <dt class="text-sm font-medium truncate">WCAG 3.0</dt>
