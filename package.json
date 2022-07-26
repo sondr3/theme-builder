@@ -15,6 +15,9 @@
     "format": "prettier --check --ignore-path=.gitignore --plugin-search-dir=. .",
     "format:fix": "prettier --write --ignore-path=.gitignore --plugin-search-dir=. ."
   },
+  "dependencies": {
+    "a11y-color-contrast": "0.2.0"
+  },
   "devDependencies": {
     "@sondr3/eslint-config": "0.7.1",
     "@sondr3/prettier": "0.6.0",
@@ -49,10 +52,7 @@
   },
   "prettier": "@sondr3/prettier",
   "lint-staged": {
-    "*.md,*.ts,*.html,*.js,*.svelte": "prettier --write --plugin-search-dir=.",
-    "*.ts,*.js,*.svelte": "eslint --cache --fix"
-  },
-  "dependencies": {
-    "a11y-color-contrast": "0.2.0"
+    "*.{md,ts,html,js,svelte}": "prettier --write --plugin-search-dir=.",
+    "*.{ts,js,svelte}": "eslint --cache --fix"
   }
 }
