@@ -4,13 +4,12 @@
   import { calcApca, calcWcag } from "$lib/helpers";
 
   let colorToAdd = "#ffffff";
-  let calculatedColor = colorToAdd;
+  let calculatedColor = "#ffffff";
   let validColor = true;
 
-  let newColorWcag = calcWcag(calculatedColor, $background);
-  let newColorApca = calcApca(calculatedColor, $background);
-
   $: validBackground = isValidColor(hex($background));
+  $: newColorWcag = calcWcag(calculatedColor, $background);
+  $: newColorApca = calcApca(calculatedColor, $background);
 
   const updateColor = (event: any) => {
     const value = hex(event.target.value);
@@ -27,7 +26,7 @@
   const addColor = () => {
     colors.update((old) => [...old, calculatedColor]);
     colorToAdd = "#ffffff";
-    calculatedColor = colorToAdd;
+    calculatedColor = "#ffffff";
   };
 </script>
 
@@ -43,7 +42,7 @@
       >
       <input
         on:input={updateColor}
-        value={colorToAdd}
+        bind:value={colorToAdd}
         type="text"
         name="name"
         id="name"
