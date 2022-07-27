@@ -1,12 +1,7 @@
 <script lang="ts">
-  import {
-    apcaContrastValue,
-    hex,
-    isValidColor,
-    round,
-    wcagContrastValue,
-  } from "a11y-color-contrast";
+  import { hex, isValidColor } from "a11y-color-contrast";
   import { background, colors } from "$lib/stores";
+  import { calcApca, calcWcag } from "$lib/helpers";
   import ValidColorIcon from "./ValidColorIcon.svelte";
 
   let editing = false;
@@ -42,9 +37,8 @@
     });
   };
 
-  $: calc = hex(color);
-  $: wcag = round(wcagContrastValue(calc, hex($background)));
-  $: apca = round(Math.abs(apcaContrastValue(calc, hex($background))));
+  $: wcag = calcWcag(color, $background);
+  $: apca = calcApca(color, $background);
   $: validWcag = !Number.isNaN(wcag) && wcag >= 7.5;
   $: validApca = !Number.isNaN(apca) && apca >= 70;
   // $: invalid = Number.isNaN(wcag) || Number.isNaN(apca);

@@ -1,23 +1,116 @@
 <script lang="ts">
-  import { colors } from "$lib/stores";
+  import { colors, background } from "$lib/stores";
   import ColorRow from "$components/ColorRow.svelte";
-  import EditBackground from "$components/EditBackground.svelte";
+  import { hex, isValidColor, toHex } from "a11y-color-contrast";
+  import { calcApca, calcWcag } from "$lib/helpers";
+
+  let colorToAdd = "#ffffff";
+  let calculatedColor = colorToAdd;
+  let validColor = true;
+
+  let newColorWcag = calcWcag(calculatedColor, $background);
+  let newColorApca = calcApca(calculatedColor, $background);
+
+  $: validBackground = isValidColor(hex($background));
+
+  const updateColor = (event: any) => {
+    const value = hex(event.target.value);
+    if (isValidColor(value)) {
+      validColor = true;
+      calculatedColor = toHex(value);
+      newColorWcag = calcWcag(calculatedColor, $background);
+      newColorApca = calcApca(calculatedColor, $background);
+    } else {
+      validColor = false;
+    }
+  };
 
   const addColor = () => {
-    colors.update((old) => [...old, "#f5f5f5"]);
+    colors.update((old) => [...old, calculatedColor]);
+    colorToAdd = "#ffffff";
+    calculatedColor = colorToAdd;
   };
 </script>
 
-<div class="lg:flex lg:items-center lg:justify-between">
-  <div class="flex-1 min-w-0">
-    <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
-      Color contrasts
-    </h2>
-  </div>
-  <div class="mt-5 flex lg:mt-0 lg:ml-4">
-    <EditBackground />
+<div class="pb-5 border-b border-gray-200">
+  <h3 class="text-lg leading-6 font-medium text-gray-900">Color Contrasts</h3>
+  <p class="mt-2 max-w-4xl text-sm text-gray-500">
+    Create a theme or check combinations of colors based on their accessibility.
+  </p>
+</div>
 
-    <span class="sm:ml-3">
+<div class="lg:flex lg:items-start lg:justify-between mt-6 h-36">
+  <div class="flex">
+    <div
+      class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600"
+    >
+      <label
+        for="name"
+        class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
+        >Foreground</label
+      >
+      <input
+        on:input={updateColor}
+        value={colorToAdd}
+        type="text"
+        name="name"
+        id="name"
+        class="block w-40 h-full border-0 p-0 text-xl text-gray-900 placeholder-gray-500 focus:ring-0"
+        placeholder="#ffffff"
+      />
+      {#if !validColor}
+        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <svg
+            class="h-5 w-5 text-red-500"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+      {/if}
+    </div>
+    <div
+      class="border ml-2 border-gray-300 rounded-md shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600"
+    >
+      <input
+        class="block w-14 border-transparent p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm h-14 cursor-pointer"
+        type="color"
+        bind:value={calculatedColor}
+      />
+    </div>
+  </div>
+
+  <div class="w-full flex flex-col mx-2">
+    <div class="flex justify-around">
+      <div>
+        <dt class="text-base font-normal">WCAG 2.2</dt>
+        <dd class="mt-1 md:block lg:flex">
+          <div class="flex items-baseline text-2xl font-semibold">{newColorWcag}</div>
+        </dd>
+      </div>
+      <div
+        class="text-3xl px-4 py-2 rounded shadow"
+        style:background={$background}
+        style:color={calculatedColor}
+      >
+        <h3>Sample text</h3>
+      </div>
+      <div>
+        <dt class="text-base font-normal">WCAG 3.0</dt>
+        <dd class="mt-1 md:block lg:flex">
+          <div class="flex items-baseline text-2xl font-semibold">{newColorApca}</div>
+        </dd>
+      </div>
+    </div>
+
+    <span class="sm:ml-3 self-center mt-2">
       <button
         on:click={addColor}
         type="button"
@@ -39,6 +132,52 @@
         Add color
       </button>
     </span>
+  </div>
+
+  <div class="flex">
+    <div
+      class="border mr-2 border-gray-300 rounded-md shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600"
+    >
+      <input
+        class="block w-14 border-transparent p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm h-14 cursor-pointer"
+        type="color"
+        bind:value={$background}
+      />
+    </div>
+    <div
+      class="relative border border-gray-300 rounded-md px-3 py-2 shadow-sm focus-within:ring-1 focus-within:ring-indigo-600 focus-within:border-indigo-600"
+    >
+      <label
+        for="name"
+        class="absolute -top-2 left-2 -mt-px inline-block px-1 bg-white text-xs font-medium text-gray-900"
+        >Background</label
+      >
+      <input
+        type="text"
+        name="name"
+        id="name"
+        class="block w-40 h-full border-0 p-0 text-xl text-gray-900 placeholder-gray-500 focus:ring-0"
+        placeholder="#000000"
+        bind:value={$background}
+      />
+      {#if !validBackground}
+        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <svg
+            class="h-5 w-5 text-red-500"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </div>
+      {/if}
+    </div>
   </div>
 </div>
 
