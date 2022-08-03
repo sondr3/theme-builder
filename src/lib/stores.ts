@@ -2,40 +2,41 @@ import { type Updater, writable } from "svelte/store";
 
 import { browser } from "$app/env";
 
+import type { Theme, ThemeColor } from "./helpers";
+
 const parse = <T>(input: string): T => {
   return JSON.parse(input) as T;
 };
 
-const BACKGROUND_KEY = "background";
-const backgroundStore = () => {
-  const stored = browser ? localStorage.getItem(BACKGROUND_KEY) ?? "#000000" : "#000000";
+const THEME_KEY = "current_theme";
+const EMPTY_THEME = `{ "background": "#ffffff", "colors": [] }`;
+
+const themeStore = () => {
+  const stored = browser
+    ? parse<Theme>(localStorage.getItem(THEME_KEY) ?? EMPTY_THEME)
+    : parse<Theme>(EMPTY_THEME);
   const { update, set, subscribe } = writable(stored);
 
   return {
-    set: (value: string) => {
-      localStorage.setItem(BACKGROUND_KEY, value);
-      return set(value);
+    set,
+    setName: (name: string) => {
+      stored.name = name;
+      localStorage.setItem(THEME_KEY, JSON.stringify(stored));
+      return set(stored);
     },
-    update,
-    subscribe,
-  };
-};
-
-export const background = backgroundStore();
-
-const COLORS_KEY = "colors";
-const colorStore = () => {
-  const stored = browser ? parse<string[]>(localStorage.getItem(COLORS_KEY) ?? "[]") : [];
-  const { set, update, subscribe } = writable(stored);
-
-  return {
-    set: (value: string[]) => {
-      localStorage.setItem(COLORS_KEY, JSON.stringify(value));
-      return set(value);
+    setBackground: (value: string) => {
+      stored.background = value;
+      localStorage.setItem(THEME_KEY, JSON.stringify(stored));
+      return set(stored);
     },
-    update: (value: Updater<string[]>) => {
+    addColor: (color: ThemeColor) => {
+      stored.colors.push(color);
+      localStorage.setItem(THEME_KEY, JSON.stringify(stored));
+      return set(stored);
+    },
+    update: (value: Updater<Theme>) => {
       return update((prev) => {
-        localStorage.setItem(COLORS_KEY, JSON.stringify(value(prev)));
+        localStorage.setItem(THEME_KEY, JSON.stringify(value(prev)));
         return value(prev);
       });
     },
@@ -43,4 +44,4 @@ const colorStore = () => {
   };
 };
 
-export const colors = colorStore();
+export const currentTheme = themeStore();
