@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colors, background } from "$lib/stores";
+  import { currentTheme } from "$lib/stores";
   import { hex, isValidColor, toHex } from "a11y-color-contrast";
   import { calcApca, calcWcag } from "$lib/helpers";
 
@@ -7,24 +7,24 @@
   let calculatedColor = "#ffffff";
   let validColor = true;
 
-  $: validBackground = isValidColor(hex($background));
-  $: newColorWcag = calcWcag(calculatedColor, $background);
-  $: newColorApca = calcApca(calculatedColor, $background);
+  $: validBackground = isValidColor(hex($currentTheme.background));
+  $: newColorWcag = calcWcag(calculatedColor, $currentTheme.background);
+  $: newColorApca = calcApca(calculatedColor, $currentTheme.background);
 
   const updateColor = (event: any) => {
     const value = hex(event.target.value);
     if (isValidColor(value)) {
       validColor = true;
       calculatedColor = toHex(value);
-      newColorWcag = calcWcag(calculatedColor, $background);
-      newColorApca = calcApca(calculatedColor, $background);
+      newColorWcag = calcWcag(calculatedColor, $currentTheme.background);
+      newColorApca = calcApca(calculatedColor, $currentTheme.background);
     } else {
       validColor = false;
     }
   };
 
   const addColor = () => {
-    colors.update((old) => [...old, calculatedColor]);
+    currentTheme.addColor({ name: "Color", color: calculatedColor });
     colorToAdd = "#ffffff";
     calculatedColor = "#ffffff";
   };
@@ -88,7 +88,7 @@
       </div>
       <div
         class="text-3xl px-4 py-2 rounded shadow"
-        style:background={$background}
+        style:background={$currentTheme.background}
         style:color={calculatedColor}
       >
         <h3>Sample text</h3>
@@ -132,7 +132,7 @@
       <input
         class="block w-14 border-transparent p-0 text-gray-900 placeholder-gray-500 focus:ring-0 sm:text-sm h-14 cursor-pointer"
         type="color"
-        bind:value={$background}
+        bind:value={$currentTheme.background}
       />
     </div>
     <div
@@ -149,7 +149,7 @@
         id="name"
         class="block w-40 h-full border-0 p-0 text-xl text-gray-900 placeholder-gray-500 focus:ring-0"
         placeholder="#000000"
-        bind:value={$background}
+        bind:value={$currentTheme.background}
       />
       {#if !validBackground}
         <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">

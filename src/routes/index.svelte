@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { colors } from "$lib/stores";
+  import { currentTheme } from "$lib/stores";
   import ColorRow from "$components/ColorRow.svelte";
   import AddColor from "$components/AddColor.svelte";
 </script>
@@ -13,6 +13,6 @@
 
 <AddColor />
 
-{#each $colors as color, i (i)}
+{#each $currentTheme.colors as color, i (i)}
   <ColorRow {color} />
 {/each}

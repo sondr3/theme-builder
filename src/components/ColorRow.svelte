@@ -1,47 +1,23 @@
 <script lang="ts">
-  import { hex, isValidColor } from "a11y-color-contrast";
-  import { background, colors } from "$lib/stores";
-  import { calcApca, calcWcag } from "$lib/helpers";
+  import { currentTheme } from "$lib/stores";
+  import { calcApca, calcWcag, type ThemeColor } from "$lib/helpers";
   import ValidColorIcon from "./ValidColorIcon.svelte";
+  import EditableRow from "./EditableRow.svelte";
 
-  let editing = false;
-  const toggle = async () => {
-    editing = !editing;
-  };
-
-  let inputElem: HTMLInputElement;
-
-  export let color: string;
-
-  const onClick = async () => {
-    await toggle();
-    inputElem.focus();
-  };
-
-  const updateColor = (event: any) => {
-    const col = event.target.value;
-    if (isValidColor(hex(col))) {
-      colors.update((cols) => {
-        let idx = cols.findIndex((c) => c === color);
-        cols[idx] = col;
-        color = col;
-        return cols;
-      });
-    }
-  };
+  export let color: ThemeColor;
 
   const removeColor = () => {
-    colors.update((cols) => {
-      let idx = cols.findIndex((c) => c === color);
-      return cols.filter((_, i) => i !== idx);
+    currentTheme.update((theme) => {
+      let idx = theme.colors.findIndex((c) => c.name === color.name);
+      theme.colors = theme.colors.filter((_, i) => i !== idx);
+      return theme;
     });
   };
 
-  $: wcag = calcWcag(color, $background);
-  $: apca = calcApca(color, $background);
+  $: wcag = calcWcag(color.color, $currentTheme.background);
+  $: apca = calcApca(color.color, $currentTheme.background);
   $: validWcag = !Number.isNaN(wcag) && wcag >= 7.5;
   $: validApca = !Number.isNaN(apca) && apca >= 70;
-  // $: invalid = Number.isNaN(wcag) || Number.isNaN(apca);
 </script>
 
 <div>
@@ -61,30 +37,10 @@
   </button>
   <dl
     class="mt-5 grid grid-cols-1 rounded-lg bg-white overflow-hidden shadow divide-y divide-gray-200 md:grid-cols-3 md:divide-y-0 md:divide-x"
-    style:background-color={$background}
-    style:color
+    style:background-color={$currentTheme.background}
+    style:color={color.color}
   >
-    <div class="px-4 py-5 sm:p-6" on:click={onClick}>
-      <dt class="text-base font-normal">Color</dt>
-      <dd class="mt-1 flex justify-between items-baseline md:block lg:flex">
-        {#if editing}
-          <input
-            on:input={updateColor}
-            bind:this={inputElem}
-            class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md text-gray-800"
-            value={color}
-            placeholder={color}
-            on:blur={() => (editing = false)}
-            on:focus={() => (editing = true)}
-            type="text"
-          />
-        {:else}
-          <div class="flex items-baseline text-2xl font-semibold">
-            {color}
-          </div>
-        {/if}
-      </dd>
-    </div>
+    <EditableRow {color} />
 
     <div class="px-4 py-5 sm:p-6 flex justify-between">
       <div>
@@ -94,7 +50,7 @@
         </dd>
       </div>
 
-      <ValidColorIcon valid={validWcag} {color} />
+      <ValidColorIcon valid={validWcag} color={color.color} />
     </div>
 
     <div class="px-4 py-5 sm:p-6 flex justify-between">
@@ -105,7 +61,7 @@
         </dd>
       </div>
 
-      <ValidColorIcon valid={validApca} {color} />
+      <ValidColorIcon valid={validApca} color={color.color} />
     </div>
   </dl>
 </div>
