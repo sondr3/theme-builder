@@ -30,7 +30,7 @@
 
   const update = (col: ThemeColor) => {
     currentTheme.update((theme) => {
-      let idx = theme.colors.findIndex((c) => c.name === color.name);
+      let idx = theme.colors.findIndex((c) => c.color === color.color);
       theme.colors[idx] = col;
       color = col;
       return theme;
