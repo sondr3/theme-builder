@@ -53,7 +53,7 @@
 </script>
 
 <div class="px-4 py-5 sm:p-6 h-28">
-  <dt class="text-base font-normal" on:click={nameClick}>
+  <dt class="text-base font-normal" on:click={nameClick} on:keypress={nameClick}>
     {#if editingName}
       <input
         on:input={updateName}
@@ -69,7 +69,7 @@
       {color.name}
     {/if}
   </dt>
-  <dd class="mt-1" on:click={colorClick}>
+  <dd class="mt-1" on:click={colorClick} on:keypress={nameClick}>
     {#if editingColor}
       <input
         on:input={updateColor}

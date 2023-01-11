@@ -1,6 +1,6 @@
 import { type Updater, writable } from "svelte/store";
 
-import { browser } from "$app/env";
+import { browser } from "$app/environment";
 
 import type { Theme, ThemeColor } from "./helpers";
 
