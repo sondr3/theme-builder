@@ -53,6 +53,7 @@
 </script>
 
 <div class="px-4 py-5 sm:p-6 h-28">
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <dt class="text-base font-normal" on:click={nameClick} on:keypress={nameClick}>
     {#if editingName}
       <input
@@ -69,6 +70,7 @@
       {color.name}
     {/if}
   </dt>
+  <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
   <dd class="mt-1" on:click={colorClick} on:keypress={nameClick}>
     {#if editingColor}
       <input

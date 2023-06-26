@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{html,js,svelte,ts}"],
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        "color-row": "1fr 1fr 1fr 50px",
+      },
+    },
   },
   plugins: [require("@tailwindcss/forms")],
 };
