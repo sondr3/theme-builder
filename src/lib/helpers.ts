@@ -2,12 +2,14 @@ import { apcaContrastValue, hex, round, wcagContrastValue } from 'a11y-color-con
 
 export interface ThemeColor {
 	name: string;
-	color: string;
+	light: string;
+	dark: string;
 }
 
 export interface Theme {
 	name?: string;
-	background: string;
+	lightBackground: string;
+	darkBackground: string;
 	colors: Array<ThemeColor>;
 }
 

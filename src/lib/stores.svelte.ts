@@ -7,25 +7,57 @@ const parse = <T>(input: string): T => {
 };
 
 const THEME_KEY = 'current_theme';
-const EMPTY_THEME = `{ "background": "#ffffff", "colors": [] }`;
+const EMPTY_THEME = `{ "lightBackground": "#ffffff", "darkBackground": "#000000", "colors": [] }`;
+
+const getInitialTheme = (): Theme => {
+	if (!browser) {
+		return parse<Theme>(EMPTY_THEME);
+	}
+
+	try {
+		const stored = localStorage.getItem(THEME_KEY);
+		if (!stored) {
+			return parse<Theme>(EMPTY_THEME);
+		}
+
+		const parsed = parse<Theme>(stored);
+
+		// Validate format
+		if (!parsed.lightBackground || !parsed.darkBackground || !Array.isArray(parsed.colors)) {
+			localStorage.removeItem(THEME_KEY);
+			return parse<Theme>(EMPTY_THEME);
+		}
+
+		return parsed;
+	} catch (error) {
+		console.error('Failed to parse theme from localStorage:', error);
+		localStorage.removeItem(THEME_KEY);
+		return parse<Theme>(EMPTY_THEME);
+	}
+};
 
 class ThemeStore {
-	#theme = $state<Theme>(
-		browser
-			? parse<Theme>(localStorage.getItem(THEME_KEY) ?? EMPTY_THEME)
-			: parse<Theme>(EMPTY_THEME)
-	);
+	#theme = $state<Theme>(getInitialTheme());
 
 	get theme() {
 		return this.#theme;
 	}
 
-	get background() {
-		return this.#theme.background;
+	get lightBackground() {
+		return this.#theme.lightBackground;
 	}
 
-	set background(value: string) {
-		this.#theme.background = value;
+	set lightBackground(value: string) {
+		this.#theme.lightBackground = value;
+		this.persist();
+	}
+
+	get darkBackground() {
+		return this.#theme.darkBackground;
+	}
+
+	set darkBackground(value: string) {
+		this.#theme.darkBackground = value;
 		this.persist();
 	}
 
@@ -46,16 +78,6 @@ class ThemeStore {
 		if (browser) {
 			localStorage.setItem(THEME_KEY, JSON.stringify(this.#theme));
 		}
-	}
-
-	setName(name: string) {
-		this.#theme.name = name;
-		this.persist();
-	}
-
-	setBackground(value: string) {
-		this.#theme.background = value;
-		this.persist();
 	}
 
 	addColor(color: ThemeColor) {

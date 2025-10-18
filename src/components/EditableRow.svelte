@@ -16,7 +16,11 @@
 	let colorInput: HTMLInputElement;
 	let nameInput: HTMLInputElement;
 
-	let { color }: { color: ThemeColor } = $props();
+	let {
+		color,
+		variant,
+		background
+	}: { color: ThemeColor; variant: 'light' | 'dark'; background: string } = $props();
 
 	const colorClick = async () => {
 		await toggleColor();
@@ -30,7 +34,7 @@
 
 	const update = (col: ThemeColor) => {
 		currentTheme.update((theme) => {
-			let idx = theme.colors.findIndex((c) => c.color === color.color);
+			let idx = theme.colors.findIndex((c) => c.name === color.name);
 			theme.colors[idx] = col;
 			color = col;
 			return theme;
@@ -46,20 +50,36 @@
 	const updateColor = (event: any) => {
 		const col = event.target.value.trim();
 		if (isValidColor(hex(col))) {
-			color.color = col;
+			if (variant === 'light') {
+				color.light = col;
+			} else {
+				color.dark = col;
+			}
 			update(color);
 		}
 	};
+
+	let currentColor = $derived(
+		variant === 'light' ? (color.light ?? '#000000') : (color.dark ?? '#ffffff')
+	);
 </script>
 
-<div class="h-28 px-4 py-5 sm:p-6">
+<div
+	class="flex h-full flex-col items-center justify-center px-4 py-5 sm:p-6"
+	style:background-color={background}
+>
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<dt class="text-base font-normal" onclick={nameClick} onkeypress={nameClick}>
+	<dt
+		class="text-center text-base font-normal"
+		onclick={nameClick}
+		onkeypress={nameClick}
+		style:color={currentColor}
+	>
 		{#if editingName}
 			<input
 				oninput={updateName}
 				bind:this={nameInput}
-				class="block w-full rounded-md border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+				class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 				value={color.name}
 				placeholder={color.name}
 				onblur={() => (editingName = false)}
@@ -71,21 +91,26 @@
 		{/if}
 	</dt>
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<dd class="mt-1" onclick={colorClick} onkeypress={nameClick}>
+	<dd
+		class="mt-1 text-center"
+		onclick={colorClick}
+		onkeypress={nameClick}
+		style:color={currentColor}
+	>
 		{#if editingColor}
 			<input
 				oninput={updateColor}
 				bind:this={colorInput}
-				class="block w-full rounded-md border-gray-300 text-gray-800 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-				value={color.color}
-				placeholder={color.color}
+				class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+				value={currentColor}
+				placeholder={currentColor}
 				onblur={() => (editingColor = false)}
 				onfocus={() => (editingColor = true)}
 				type="text"
 			/>
 		{:else}
-			<div class="flex items-baseline text-2xl font-semibold">
-				{color.color}
+			<div class="text-2xl font-semibold">
+				{currentColor}
 			</div>
 		{/if}
 	</dd>

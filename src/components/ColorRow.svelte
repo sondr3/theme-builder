@@ -14,45 +14,71 @@
 		});
 	};
 
-	let wcag = $derived(calcWcag(color.color, currentTheme.background));
-	let apca = $derived(calcApca(color.color, currentTheme.background));
-	let validWcag = $derived(!Number.isNaN(wcag) && wcag >= 7.5);
-	let validApca = $derived(!Number.isNaN(apca) && apca >= 70);
+	// Calculate contrast for light variant against light background
+	let lightWcag = $derived(
+		color.light && currentTheme.lightBackground
+			? calcWcag(color.light, currentTheme.lightBackground)
+			: 0
+	);
+	let lightApca = $derived(
+		color.light && currentTheme.lightBackground
+			? calcApca(color.light, currentTheme.lightBackground)
+			: 0
+	);
+	let validLightWcag = $derived(!Number.isNaN(lightWcag) && lightWcag >= 7.5);
+	let validLightApca = $derived(!Number.isNaN(lightApca) && lightApca >= 70);
+
+	// Calculate contrast for dark variant against dark background
+	let darkWcag = $derived(
+		color.dark && currentTheme.darkBackground
+			? calcWcag(color.dark, currentTheme.darkBackground)
+			: 0
+	);
+	let darkApca = $derived(
+		color.dark && currentTheme.darkBackground
+			? calcApca(color.dark, currentTheme.darkBackground)
+			: 0
+	);
+	let validDarkWcag = $derived(!Number.isNaN(darkWcag) && darkWcag >= 7.5);
+	let validDarkApca = $derived(!Number.isNaN(darkApca) && darkApca >= 70);
 </script>
 
 <div>
 	<dl
-		class="grid-cols-color-row mt-5 grid divide-y divide-gray-200 overflow-hidden rounded-lg bg-white shadow md:divide-x md:divide-y-0"
-		style:background-color={currentTheme.background}
-		style:color={color.color}
+		class="mt-5 grid grid-cols-5 divide-x divide-gray-200 overflow-hidden rounded-lg bg-white shadow"
 	>
-		<EditableRow {color} />
+		<!-- Left: Light variant -->
+		<EditableRow {color} variant="light" background={currentTheme.lightBackground} />
 
-		<div class="flex justify-between px-4 py-5 sm:p-6">
-			<div>
-				<dt class="text-base font-normal">WCAG 2.2</dt>
-				<dd class="mt-1 md:block lg:flex">
-					<div class="flex items-baseline text-2xl font-semibold">{wcag}</div>
-				</dd>
+		<!-- Light contrast data -->
+		<div class="flex flex-col justify-around px-4 py-5 sm:p-6">
+			<div class="flex items-center justify-between">
+				<div>
+					<dt class="text-base font-normal">WCAG 2.2</dt>
+					<dd class="mt-1">
+						<div class="flex items-baseline text-2xl font-semibold">{lightWcag}</div>
+					</dd>
+				</div>
+				<ValidColorIcon valid={validLightWcag} />
 			</div>
 
-			<ValidColorIcon valid={validWcag} color={color.color} />
-		</div>
-
-		<div class="flex justify-between px-4 py-5 sm:p-6">
-			<div>
-				<dt class="text-base font-normal">WCAG 3.0</dt>
-				<dd class="mt-1 md:block lg:flex">
-					<div class="flex items-baseline text-2xl font-semibold">{apca}</div>
-				</dd>
+			<div class="flex items-center justify-between">
+				<div>
+					<dt class="text-base font-normal">WCAG 3.0</dt>
+					<dd class="mt-1">
+						<div class="flex items-baseline text-2xl font-semibold">{lightApca}</div>
+					</dd>
+				</div>
+				<ValidColorIcon valid={validLightApca} />
 			</div>
-
-			<ValidColorIcon valid={validApca} color={color.color} />
 		</div>
-		<div class="flex justify-center px-1 py-1">
+
+		<!-- Center: Action buttons -->
+		<div class="flex items-center justify-center px-2 py-5">
 			<button
 				onclick={removeColor}
-				class="float-right inline-flex items-center justify-center p-2 text-gray-800 focus:outline-none"
+				aria-label="Remove color"
+				class="inline-flex items-center justify-center rounded p-2 text-gray-800 hover:bg-gray-100 focus:outline-none"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -70,5 +96,31 @@
 				</svg>
 			</button>
 		</div>
+
+		<!-- Dark contrast data -->
+		<div class="flex flex-col justify-around px-4 py-5 sm:p-6">
+			<div class="flex items-center justify-between">
+				<ValidColorIcon valid={validDarkWcag} />
+				<div class="text-right">
+					<dt class="text-base font-normal">WCAG 2.2</dt>
+					<dd class="mt-1">
+						<div class="flex items-baseline justify-end text-2xl font-semibold">{darkWcag}</div>
+					</dd>
+				</div>
+			</div>
+
+			<div class="flex items-center justify-between">
+				<ValidColorIcon valid={validDarkApca} />
+				<div class="text-right">
+					<dt class="text-base font-normal">WCAG 3.0</dt>
+					<dd class="mt-1">
+						<div class="flex items-baseline justify-end text-2xl font-semibold">{darkApca}</div>
+					</dd>
+				</div>
+			</div>
+		</div>
+
+		<!-- Right: Dark variant -->
+		<EditableRow {color} variant="dark" background={currentTheme.darkBackground} />
 	</dl>
 </div>
