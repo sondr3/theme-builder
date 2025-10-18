@@ -1,16 +1,2 @@
-<script lang="ts">
-  import { currentTheme } from "$lib/stores";
-  import ColorRow from "$components/ColorRow.svelte";
-  import AddColor from "$components/AddColor.svelte";
-  import SectionHeader from "$components/SectionHeader.svelte";
-</script>
-
-<SectionHeader
-  title="Color Contrasts"
-  description="Create a theme or check combinations of colors based on their accessibility."
-/>
-<AddColor />
-
-{#each $currentTheme.colors as color, i (i)}
-  <ColorRow {color} />
-{/each}
+<h1>Welcome to SvelteKit</h1>
+<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>

@@ -1,4 +1,9 @@
-import { apcaContrastValue, hex, round, wcagContrastValue } from "a11y-color-contrast";
+import {
+  apcaContrastValue,
+  hex,
+  round,
+  wcagContrastValue,
+} from "a11y-color-contrast";
 
 export interface ThemeColor {
   name: string;
