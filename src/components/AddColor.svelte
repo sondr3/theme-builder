@@ -1,17 +1,12 @@
 <script lang="ts">
 	import { currentTheme } from '$lib/stores.svelte';
-	import { hex, isValidColor, toHex } from 'a11y-color-contrast';
+	import { hex, isValidColor } from 'a11y-color-contrast';
 	import { calcApca, calcWcag } from '$lib/helpers';
 	import Color from 'colorjs.io';
-	import type { Action } from 'svelte/action';
 
 	let colorName = $state('Color');
-	let lightColorInput = $state('#000000');
 	let lightColorCalculated = $state('#000000');
-	let darkColorInput = $state('#ffffff');
 	let darkColorCalculated = $state('#ffffff');
-	let validLightColor = $state(true);
-	let validDarkColor = $state(true);
 
 	let validLightBackground = $derived(
 		currentTheme.lightBackground ? isValidColor(hex(currentTheme.lightBackground)) : false
@@ -36,36 +31,6 @@
 		currentTheme.darkBackground ? calcApca(darkColorCalculated, currentTheme.darkBackground) : 0
 	);
 
-	const updateLightColor = (event: any) => {
-		const input = event?.target?.value;
-		if (!input) {
-			validLightColor = false;
-			return;
-		}
-		const value = hex(input);
-		if (isValidColor(value)) {
-			validLightColor = true;
-			lightColorCalculated = toHex(value);
-		} else {
-			validLightColor = false;
-		}
-	};
-
-	const updateDarkColor = (event: any) => {
-		const input = event?.target?.value;
-		if (!input) {
-			validDarkColor = false;
-			return;
-		}
-		const value = hex(input);
-		if (isValidColor(value)) {
-			validDarkColor = true;
-			darkColorCalculated = toHex(value);
-		} else {
-			validDarkColor = false;
-		}
-	};
-
 	const addColor = () => {
 		currentTheme.addColor({
 			name: colorName,
@@ -73,20 +38,10 @@
 			dark: darkColorCalculated
 		});
 		colorName = 'Color';
-		lightColorInput = '#000000';
 		lightColorCalculated = '#000000';
-		darkColorInput = '#ffffff';
 		darkColorCalculated = '#ffffff';
 	};
-
-	const action: Action = () => {
-		const darkPicker = document.getElementById('dark-background-picker');
-		// const darkShadow = darkPicker!.attachShadow({ mode: 'open' });
-		// console.log(darkShadow);
-	};
 </script>
-
-<svelte:document use:action />
 
 <!-- Background Colors Section -->
 <section class="mt-6 rounded-lg border-2 border-gray-200 bg-gray-50 p-6">
@@ -222,10 +177,7 @@
 							color={lightColorCalculated}
 							oncolorchange={(e: { target?: { color: Color } }) => {
 								if (e?.target?.color === undefined) return;
-								const hexColor = e.target.color.toString({ format: 'hex' });
-								lightColorCalculated = hexColor;
-								lightColorInput = hexColor;
-								validLightColor = true;
+								lightColorCalculated = e.target.color.toString({ format: 'hex' });
 							}}
 						></color-picker>
 						<div
@@ -274,10 +226,7 @@
 							color={darkColorCalculated}
 							oncolorchange={(e: { target?: { color: Color } }) => {
 								if (e?.target?.color === undefined) return;
-								const hexColor = e.target.color.toString({ format: 'hex' });
-								darkColorCalculated = hexColor;
-								darkColorInput = hexColor;
-								validDarkColor = true;
+								darkColorCalculated = e.target.color.toString({ format: 'hex' });
 							}}
 						></color-picker>
 					</div>
