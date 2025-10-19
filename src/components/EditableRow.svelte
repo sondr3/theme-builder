@@ -2,7 +2,6 @@
 	import { hex, isValidColor } from 'a11y-color-contrast';
 	import { currentTheme } from '$lib/stores.svelte';
 	import type { ThemeColor } from '$lib/helpers';
-	import type { FormEventHandler } from 'svelte/elements';
 
 	let editingColor = $state(false);
 	const toggleColor = async () => {
@@ -25,12 +24,12 @@
 
 	const colorClick = async () => {
 		await toggleColor();
-		colorInput.focus();
+		colorInput!.focus();
 	};
 
 	const nameClick = async () => {
 		await toggleName();
-		nameInput.focus();
+		nameInput!.focus();
 	};
 
 	const update = (col: ThemeColor) => {
