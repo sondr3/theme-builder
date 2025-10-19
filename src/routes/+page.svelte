@@ -5,6 +5,9 @@
 	import SectionHeader from '../components/SectionHeader.svelte';
 </script>
 
+<svelte:head>
+	<title>Theme Builder | YEET</title>
+</svelte:head>
 <SectionHeader
 	title="Color Contrasts"
 	description="Create a theme or check combinations of colors based on their accessibility."
