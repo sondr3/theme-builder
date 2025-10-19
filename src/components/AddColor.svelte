@@ -218,45 +218,19 @@
 					}}
 				></color-picker>
 				<div
-					class="relative flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
+					class="flex flex-1 flex-col items-center justify-around rounded-lg p-4 shadow"
+					style:background={currentTheme.lightBackground}
+					style:color={lightColorCalculated}
 				>
-					<input
-						oninput={updateLightColor}
-						bind:value={lightColorInput}
-						type="text"
-						class="block w-full border-0 p-0 text-sm text-gray-900 placeholder-gray-500 focus:ring-0"
-						placeholder="#000000"
-					/>
-					{#if !validLightColor}
-						<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-							<svg
-								class="h-4 w-4 text-red-500"
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 20 20"
-								fill="currentColor"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-									clip-rule="evenodd"
-								/>
-							</svg>
+					<p class="text-center text-2xl font-medium">Sample text</p>
+					<p class="text-center text-sm opacity-75">{lightColorCalculated}</p>
+					<div class="flex w-full justify-between text-base">
+						<div>
+							<div class="font-semibold">WCAG 2.2: {lightWcag}</div>
 						</div>
-					{/if}
-				</div>
-			</div>
-			<div
-				class="rounded-lg p-4 shadow"
-				style:background={currentTheme.lightBackground}
-				style:color={lightColorCalculated}
-			>
-				<p class="text-center text-lg font-medium">Sample text</p>
-				<div class="mt-2 flex justify-around text-sm">
-					<div>
-						<div class="font-semibold">WCAG 2.2: {lightWcag}</div>
-					</div>
-					<div>
-						<div class="font-semibold">WCAG 3.0: {lightApca}</div>
+						<div>
+							<div class="font-semibold">WCAG 3.0: {lightApca}</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -266,7 +240,24 @@
 		<div class="space-y-2">
 			<h4 class="text-sm font-medium text-gray-700">Dark Variant</h4>
 			<div class="flex gap-2">
+				<div
+					class="flex flex-1 flex-col items-center justify-around rounded-lg p-4 shadow"
+					style:background={currentTheme.darkBackground}
+					style:color={darkColorCalculated}
+				>
+					<p class="text-center text-2xl font-medium">Sample text</p>
+					<p class="text-center text-sm opacity-75">{darkColorCalculated}</p>
+					<div class="flex w-full justify-between text-base">
+						<div>
+							<div class="font-semibold">WCAG 2.2: {darkWcag}</div>
+						</div>
+						<div>
+							<div class="font-semibold">WCAG 3.0: {darkApca}</div>
+						</div>
+					</div>
+				</div>
 				<color-picker
+					id="dark-foreground-picker"
 					space="oklch"
 					alpha
 					color={darkColorCalculated}
@@ -278,48 +269,6 @@
 						validDarkColor = true;
 					}}
 				></color-picker>
-				<div
-					class="relative flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
-				>
-					<input
-						oninput={updateDarkColor}
-						bind:value={darkColorInput}
-						type="text"
-						class="block w-full border-0 p-0 text-sm text-gray-900 placeholder-gray-500 focus:ring-0"
-						placeholder="#ffffff"
-					/>
-					{#if !validDarkColor}
-						<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-							<svg
-								class="h-4 w-4 text-red-500"
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 20 20"
-								fill="currentColor"
-							>
-								<path
-									fill-rule="evenodd"
-									d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-									clip-rule="evenodd"
-								/>
-							</svg>
-						</div>
-					{/if}
-				</div>
-			</div>
-			<div
-				class="rounded-lg p-4 shadow"
-				style:background={currentTheme.darkBackground}
-				style:color={darkColorCalculated}
-			>
-				<p class="text-center text-lg font-medium">Sample text</p>
-				<div class="mt-2 flex justify-around text-sm">
-					<div>
-						<div class="font-semibold">WCAG 2.2: {darkWcag}</div>
-					</div>
-					<div>
-						<div class="font-semibold">WCAG 3.0: {darkApca}</div>
-					</div>
-				</div>
 			</div>
 		</div>
 	</div>
@@ -354,6 +303,14 @@
 	}
 
 	color-picker#dark-background-picker::part(sliders) {
+		order: 1;
+	}
+
+	color-picker#dark-foreground-picker {
+		grid-template-columns: 1fr 3fr;
+	}
+
+	color-picker#dark-foreground-picker::part(sliders) {
 		order: 1;
 	}
 </style>
