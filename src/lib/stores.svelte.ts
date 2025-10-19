@@ -1,4 +1,5 @@
 import { browser } from '$app/environment';
+import Color from 'colorjs.io';
 
 import type { Theme, ThemeColor } from './helpers';
 
@@ -7,17 +8,21 @@ const parse = <T>(input: string): T => {
 };
 
 const THEME_KEY = 'current_theme';
-const EMPTY_THEME = `{ "lightBackground": "#ffffff", "darkBackground": "#000000", "colors": [] }`;
+const EMPTY_THEME: Theme = {
+	lightBackground: new Color({ spaceId: 'oklch', coords: [1, 0, 180], alpha: 1 }),
+	darkBackground: new Color({ spaceId: 'oklch', coords: [0, 0, 180], alpha: 1 }),
+	colors: []
+};
 
 const getInitialTheme = (): Theme => {
 	if (!browser) {
-		return parse<Theme>(EMPTY_THEME);
+		return EMPTY_THEME;
 	}
 
 	try {
 		const stored = localStorage.getItem(THEME_KEY);
 		if (!stored) {
-			return parse<Theme>(EMPTY_THEME);
+			return EMPTY_THEME;
 		}
 
 		const parsed = parse<Theme>(stored);
@@ -25,14 +30,22 @@ const getInitialTheme = (): Theme => {
 		// Validate format
 		if (!parsed.lightBackground || !parsed.darkBackground || !Array.isArray(parsed.colors)) {
 			localStorage.removeItem(THEME_KEY);
-			return parse<Theme>(EMPTY_THEME);
+			return EMPTY_THEME;
 		}
+
+		parsed.darkBackground = new Color(parsed.darkBackground);
+		parsed.lightBackground = new Color(parsed.lightBackground);
+		parsed.colors = parsed.colors.map(({ name, light, dark }) => ({
+			name,
+			light: new Color(light),
+			dark: new Color(dark)
+		}));
 
 		return parsed;
 	} catch (error) {
 		console.error('Failed to parse theme from localStorage:', error);
 		localStorage.removeItem(THEME_KEY);
-		return parse<Theme>(EMPTY_THEME);
+		return EMPTY_THEME;
 	}
 };
 
@@ -47,7 +60,7 @@ class ThemeStore {
 		return this.#theme.lightBackground;
 	}
 
-	set lightBackground(value: string) {
+	set lightBackground(value: Color) {
 		this.#theme.lightBackground = value;
 		this.persist();
 	}
@@ -56,7 +69,7 @@ class ThemeStore {
 		return this.#theme.darkBackground;
 	}
 
-	set darkBackground(value: string) {
+	set darkBackground(value: Color) {
 		this.#theme.darkBackground = value;
 		this.persist();
 	}

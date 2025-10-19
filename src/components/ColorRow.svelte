@@ -15,30 +15,14 @@
 	};
 
 	// Calculate contrast for light variant against light background
-	let lightWcag = $derived(
-		color.light && currentTheme.lightBackground
-			? calcWcag(color.light, currentTheme.lightBackground)
-			: 0
-	);
-	let lightApca = $derived(
-		color.light && currentTheme.lightBackground
-			? calcApca(color.light, currentTheme.lightBackground)
-			: 0
-	);
+	let lightWcag = $derived(calcWcag(color.light, currentTheme.lightBackground));
+	let lightApca = $derived(calcApca(color.light, currentTheme.lightBackground));
 	let validLightWcag = $derived(!Number.isNaN(lightWcag) && lightWcag >= 7.5);
 	let validLightApca = $derived(!Number.isNaN(lightApca) && lightApca >= 70);
 
 	// Calculate contrast for dark variant against dark background
-	let darkWcag = $derived(
-		color.dark && currentTheme.darkBackground
-			? calcWcag(color.dark, currentTheme.darkBackground)
-			: 0
-	);
-	let darkApca = $derived(
-		color.dark && currentTheme.darkBackground
-			? calcApca(color.dark, currentTheme.darkBackground)
-			: 0
-	);
+	let darkWcag = $derived(calcWcag(color.dark, currentTheme.darkBackground));
+	let darkApca = $derived(calcApca(color.dark, currentTheme.darkBackground));
 	let validDarkWcag = $derived(!Number.isNaN(darkWcag) && darkWcag >= 7.5);
 	let validDarkApca = $derived(!Number.isNaN(darkApca) && darkApca >= 70);
 </script>
