@@ -13,7 +13,8 @@
 		"lint": "prettier --check . && eslint ."
 	},
 	"dependencies": {
-		"a11y-color-contrast": "0.2.0"
+		"a11y-color-contrast": "0.2.0",
+		"colorjs.io": "0.5.2"
 	},
 	"devDependencies": {
 		"@eslint/compat": "1.4.0",

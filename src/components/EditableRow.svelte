@@ -2,6 +2,7 @@
 	import { hex, isValidColor } from 'a11y-color-contrast';
 	import { currentTheme } from '$lib/stores.svelte';
 	import type { ThemeColor } from '$lib/helpers';
+	import type { FormEventHandler } from 'svelte/elements';
 
 	let editingColor = $state(false);
 	const toggleColor = async () => {
@@ -13,8 +14,8 @@
 		editingName = !editingName;
 	};
 
-	let colorInput: HTMLInputElement;
-	let nameInput: HTMLInputElement;
+	let colorInput: HTMLInputElement | undefined = $state();
+	let nameInput: HTMLInputElement | undefined = $state();
 
 	let {
 		color,
@@ -41,14 +42,14 @@
 		});
 	};
 
-	const updateName = (event: any) => {
-		const name = event.target.value;
+	const updateName = (event: Event) => {
+		const name = (event.target as HTMLInputElement).value;
 		color.name = name.trim();
 		update(color);
 	};
 
-	const updateColor = (event: any) => {
-		const col = event.target.value.trim();
+	const updateColor = (event: Event) => {
+		const col = (event.target as HTMLInputElement).value.trim();
 		if (isValidColor(hex(col))) {
 			if (variant === 'light') {
 				color.light = col;

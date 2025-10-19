@@ -2,6 +2,7 @@
 	import { currentTheme } from '$lib/stores.svelte';
 	import { hex, isValidColor, toHex } from 'a11y-color-contrast';
 	import { calcApca, calcWcag } from '$lib/helpers';
+	import Color from 'colorjs.io';
 
 	let colorName = $state('Color');
 	let lightColorInput = $state('#000000');
@@ -10,6 +11,9 @@
 	let darkColorCalculated = $state('#ffffff');
 	let validLightColor = $state(true);
 	let validDarkColor = $state(true);
+
+	let oklch = $state<Color>(new Color('#000'));
+	$inspect(oklch);
 
 	let validLightBackground = $derived(
 		currentTheme.lightBackground ? isValidColor(hex(currentTheme.lightBackground)) : false
@@ -81,6 +85,19 @@
 <!-- Background inputs at top -->
 <div class="mt-6 flex gap-4">
 	<div class="flex items-center gap-2">
+		<color-picker
+			space="oklch"
+			color="oklch(60% 30% 180 / 0.6)"
+			alpha
+			oncolorchange={(e: { target?: { color: Color } }) => {
+				if (e?.target?.color === undefined) return;
+				oklch = new Color({
+					space: e.target.color.spaceId,
+					coords: e.target.color.coords,
+					alpha: e.target.color.alpha
+				});
+			}}
+		></color-picker>
 		<input
 			class="block h-12 w-12 cursor-pointer rounded border-gray-300 focus:ring-0"
 			type="color"
