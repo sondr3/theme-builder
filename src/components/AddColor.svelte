@@ -3,6 +3,7 @@
 	import { hex, isValidColor, toHex } from 'a11y-color-contrast';
 	import { calcApca, calcWcag } from '$lib/helpers';
 	import Color from 'colorjs.io';
+	import type { Action } from 'svelte/action';
 
 	let colorName = $state('Color');
 	let lightColorInput = $state('#000000');
@@ -11,9 +12,6 @@
 	let darkColorCalculated = $state('#ffffff');
 	let validLightColor = $state(true);
 	let validDarkColor = $state(true);
-
-	let oklch = $state<Color>(new Color('#000'));
-	$inspect(oklch);
 
 	let validLightBackground = $derived(
 		currentTheme.lightBackground ? isValidColor(hex(currentTheme.lightBackground)) : false
@@ -80,29 +78,27 @@
 		darkColorInput = '#ffffff';
 		darkColorCalculated = '#ffffff';
 	};
+
+	const action: Action = () => {
+		const darkPicker = document.getElementById('dark-background-picker');
+		// const darkShadow = darkPicker!.attachShadow({ mode: 'open' });
+		// console.log(darkShadow);
+	};
 </script>
 
+<svelte:document use:action />
 <!-- Background inputs at top -->
-<div class="mt-6 flex gap-4">
+<div class="mt-6 flex justify-around gap-4">
 	<div class="flex items-center gap-2">
 		<color-picker
 			space="oklch"
-			color="oklch(60% 30% 180 / 0.6)"
 			alpha
+			color={currentTheme.lightBackground}
 			oncolorchange={(e: { target?: { color: Color } }) => {
 				if (e?.target?.color === undefined) return;
-				oklch = new Color({
-					space: e.target.color.spaceId,
-					coords: e.target.color.coords,
-					alpha: e.target.color.alpha
-				});
+				currentTheme.lightBackground = e.target.color.toString({ format: 'hex' });
 			}}
 		></color-picker>
-		<input
-			class="block h-12 w-12 cursor-pointer rounded border-gray-300 focus:ring-0"
-			type="color"
-			bind:value={currentTheme.lightBackground}
-		/>
 		<div
 			class="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
 		>
@@ -138,11 +134,6 @@
 	</div>
 
 	<div class="flex items-center gap-2">
-		<input
-			class="block h-12 w-12 cursor-pointer rounded border-gray-300 focus:ring-0"
-			type="color"
-			bind:value={currentTheme.darkBackground}
-		/>
 		<div
 			class="relative rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
 		>
@@ -175,6 +166,16 @@
 				</div>
 			{/if}
 		</div>
+		<color-picker
+			id="dark-background-picker"
+			space="oklch"
+			alpha
+			color={currentTheme.darkBackground}
+			oncolorchange={(e: { target?: { color: Color } }) => {
+				if (e?.target?.color === undefined) return;
+				currentTheme.darkBackground = e.target.color.toString({ format: 'hex' });
+			}}
+		></color-picker>
 	</div>
 </div>
 
@@ -204,11 +205,18 @@
 		<div class="space-y-2">
 			<h4 class="text-sm font-medium text-gray-700">Light Variant</h4>
 			<div class="flex gap-2">
-				<input
-					class="block h-12 w-12 cursor-pointer rounded border-gray-300 focus:ring-0"
-					type="color"
-					bind:value={lightColorCalculated}
-				/>
+				<color-picker
+					space="oklch"
+					alpha
+					color={lightColorCalculated}
+					oncolorchange={(e: { target?: { color: Color } }) => {
+						if (e?.target?.color === undefined) return;
+						const hexColor = e.target.color.toString({ format: 'hex' });
+						lightColorCalculated = hexColor;
+						lightColorInput = hexColor;
+						validLightColor = true;
+					}}
+				></color-picker>
 				<div
 					class="relative flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
 				>
@@ -258,11 +266,18 @@
 		<div class="space-y-2">
 			<h4 class="text-sm font-medium text-gray-700">Dark Variant</h4>
 			<div class="flex gap-2">
-				<input
-					class="block h-12 w-12 cursor-pointer rounded border-gray-300 focus:ring-0"
-					type="color"
-					bind:value={darkColorCalculated}
-				/>
+				<color-picker
+					space="oklch"
+					alpha
+					color={darkColorCalculated}
+					oncolorchange={(e: { target?: { color: Color } }) => {
+						if (e?.target?.color === undefined) return;
+						const hexColor = e.target.color.toString({ format: 'hex' });
+						darkColorCalculated = hexColor;
+						darkColorInput = hexColor;
+						validDarkColor = true;
+					}}
+				></color-picker>
 				<div
 					class="relative flex-1 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus-within:border-indigo-600 focus-within:ring-1 focus-within:ring-indigo-600"
 				>
@@ -332,3 +347,13 @@
 		</button>
 	</div>
 </div>
+
+<style>
+	color-picker#dark-background-picker {
+		grid-template-columns: 1fr 3fr;
+	}
+
+	color-picker#dark-background-picker::part(sliders) {
+		order: 1;
+	}
+</style>
